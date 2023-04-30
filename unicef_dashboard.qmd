@@ -1,0 +1,232 @@
+---
+title: "Data Visualization Assignment"
+format: html
+editor: visual
+---
+
+## 
+
+##  **DATA FOR UNICEF** 
+
+**The Comparison of countries based on the Development metrics**
+
+A developed country typically has a high level of economic and social development, including high levels of income, education, and healthcare. Here China is taken as an example.
+
+-   **China**:
+
+1.  Location: A country in East Asia.
+
+2.  Capital: Beijing
+
+3.  Currency: Chinese Yuan
+
+4.  Languages Spoken: Chinese Mandarin, Korean, English..
+
+5.  Area: 9.597 million km\^2
+
+An underdeveloped country, on the other hand, is one that has low levels of economic and social development, often characterized by poverty, high infant mortality rates, and low levels of education and healthcare. These countries typically have a lower Gross National Income (GNI) per capita and limited infrastructure. Here Nigeria is taken as an example of an underdeveloped country.
+
+-   **Nigeria:**
+
+1.  Location: A country in West Africa
+
+2.  Capital: Abuja
+
+3.  Currency: Nigerian Naira
+
+4.  Official Language: English
+
+5.  Dialing Code: +234
+
+A developing country is somewhere in between these two extremes. It has made some progress towards economic and social development, but still has a long way to go. Developing countries often have a lower GNI per capita than developed countries, but higher than underdeveloped countries. Here India is taken as an example of a developing country.
+
+-   **India**:
+
+1.  Location: South Asia
+
+2.  Capital: New Delhi
+
+3.  Languages Spoken: Hindi, English, Regional languages
+
+4.  Currency: Indian Rupee
+
+5.  Dialing Code: +91
+
+The metrics taken to show the development of each country is Population, Gross National Income, Life Expectency and Military Expenditure.
+
+Life expectancy: Most developed nations have mid-80s or greater life expectancies. Underdeveloped countries have life expectancies below 60 years. Developing countries have intermediate life expectancies but are improving healthcare and life expectancy.
+
+Population: Modern nations have consistent birth and death rates. High birth and infant death rates in developing nations cause fast population increase. Birth rates vary in developing nations.
+
+GNI per capita: Advanced economies have high GNI per capita. Developing countries have GNI per capita between underdeveloped and developed.
+
+GDP per capita: The measure of size of the economy of a country. The countries with high Gross Domestic Product per capita are generally more developed. But GDP per capita is also the comparison of GDP to the population of the country and it may be different as per the population size of the country.
+
+Population, GNI per capita, life expectancy, and GDP per capita can be used to compare developed, undeveloped, and developing countries, despite their many disparities.
+
+All these are different factors that help to know more about the country.
+
+```{r, echo=FALSE}
+#install.packages("tidyverse")
+#install.packages("palmerpenguins")
+#install.packages("choroplethr")
+#install.packages("countrycode")
+# install.packages("choroplethrMaps")
+# install.packages("maps")
+```
+
+```{r, results=FALSE,echo=FALSE,message=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(choroplethr)
+library(countrycode)
+library(maps)
+#library(choroplethrMaps)
+```
+
+```{r, echo=FALSE}
+data1 <- read.csv(file = './unicef_indicator_1.csv')
+```
+
+```{r, echo=FALSE}
+meta_data <- read.csv(file='./unicef_metadata.csv')
+```
+
+```{r, echo=FALSE}
+merged_data <- merge(data1, meta_data, by.x="country", by.y="country")
+# head(merged_data)
+```
+
+```{r, echo=FALSE}
+df_countries_data <- merged_data %>% filter(country %in% c("China", "India", "Nigeria"))
+```
+
+```{r, echo=FALSE}
+names(df_countries_data)[20] <- "Population"
+names(df_countries_data)[22] <- "GNI"
+names(df_countries_data)[24] <- "LifeExpectancy"
+names(df_countries_data)[21] <- "GDP_PerCapita"
+#colnames(df_countries_data)
+```
+
+```{r, echo=FALSE}
+df_countries_data['Population'] <- df_countries_data['Population']/1000000 
+df_countries_data['GNI'] <- df_countries_data['GNI']/100000000
+
+```
+
+## Time Series Pictorial representation
+
+**The Time Series Line Graph Life expectancy v/s Year (time) graphical representation of for three countries with different development status is represented below. Here comparison of a developed country like the China, a developed country like the India and a underdeveloped country like the Nigeria is done.**
+
+Life Expectancy v/s Time Period *( Time Series Graph )*
+
+The explanation: The maximum Life expectancy of Nigeria is the lowest standing at 52.
+
+India's average life expectancy is more than that of Nigeria but less than that of China.
+
+China's population expect to live the longest and that too till 78 years old.
+
+```{r, warning=FALSE, echo=FALSE}
+ggplot(df_countries_data, aes(x = year, y = LifeExpectancy, color = country)) +
+  geom_line() +
+  labs(x = "Year", y = "Life Expectancy (years)", color = "Country")
+```
+
+```{r, warning=FALSE, echo=FALSE}
+df_countries_bardata <- df_countries_data[, c("year","country", "Population", "GNI")]
+df_countries_bardata <- distinct(df_countries_bardata)
+df_countries_bardata <- df_countries_bardata %>% filter(year %in% c(2001,2006,2011,2016,2021))
+```
+
+# 
+Bar Graph Representation
+
+**The below bar graph shows a graphical representation of Population status for three countries with different development status. Here comparison of a developed country like the China, a developed country like the India and a underdeveloped country like the Nigeria is done. The years 2001, 2006, 2011, 2016, 2021 are taken into the bar graph to represent the data.**
+
+Population v/s Time Period
+
+The explanation: The population of Nigeria increases in less amount but uniformly and it has the least population compared to the other countries.
+The India's population increase is more compared to the other countries and the the growth in compared to the years taken, is the highest.
+
+Compared to the other countries, China has a slow increase in its population but it is the largest populated country in the world.
+
+```{r, warning=FALSE, echo=FALSE}
+ggplot(df_countries_bardata, aes(x = year, y = Population, fill = country), width =800, height = 800) + geom_bar(stat = "identity", position ="dodge") + scale_x_continuous(breaks = df_countries_bardata$year, labels = as.character(df_countries_bardata$year)) +  labs(x = "Year", y = "Population (in millions)", color = "Country")
+```
+
+## Scatter-Plot Diagram
+
+**The below Scatter Plot that represents GNI v/s Year helps to understand the development of the chosen countries with respect to Gross National Income.**
+
+**Here comparison of a developed country like the China, a developed country like the India and a underdeveloped country like the Nigeria is done.**
+
+Gross National Income v/s Time Period
+
+The explanation: The GNI growth of Nigeria is almost stagnant and increases a little but still goes down towards the end.\
+The India's GNI growth happens slowly and gradual but it is upwards. \
+Compared to the other countries, China's GNI growth is exponential and the increase is huge and it is visible.
+
+The Scatter Plot signifies the importance of how Gross National Income and the development of a country is closely related.
+
+```{r, warning=FALSE, echo=FALSE}
+shapes <- seq(0, 25, length.out = length(unique(df_countries_bardata$country)))
+plot(df_countries_bardata$year, df_countries_bardata$GNI, pch = shapes[as.numeric(as.factor(df_countries_bardata$country))], xlab ="Year", ylab = "GNI", width = 800, height = 800, xaxt = "n",col="blue")
+legend("topleft", legend = unique(df_countries_bardata$country),
+       pch = shapes, col="blue")
+axis(1, at = unique(df_countries_bardata$year), labels = unique(df_countries_bardata$year))
+```
+
+## World Map Representation
+
+**The below World Map diagram represents population density of the countries chosen to aid in comparing the GDP per capita of the chosen countries which is given as the World Map as the last picitorial representation.**
+
+```{r, warning=FALSE, echo=FALSE}
+df_countries_map_data <- df_countries_data %>% filter(year %in% c(2021))
+map_data <- map_data("world")
+countries <- c("India", "China", "Nigeria")
+country_data <- subset(map_data, region %in% countries)
+country_pop_data <- merge(map_data, df_countries_map_data, by.x = "region", by.y = "country", all.x = TRUE)
+```
+
+```{r, warning=FALSE, echo=FALSE}
+ggplot() + geom_polygon(data = country_pop_data, aes(x = long, y = lat, group = group, fill = Population),color = "black", size = 0.1) + scale_fill_gradient(low = "white", high = "red", name = "Population") + theme_void()
+```
+
+```{r, warning=FALSE, echo=FALSE}
+ggplot() + geom_polygon(data = country_pop_data, aes(x = long, y = lat, group = group, fill = GDP_PerCapita),color = "black", size = 0.1) + scale_fill_gradient(low = "white", high = "red", name = "GDP_PerCapita") + theme_void()
+```
+
+```{r, warning=FALSE, echo=FALSE}
+india_gdp <- country_pop_data %>% filter(region %in% c("India"))
+```
+
+**The above World Map Diagram shows the pictorial representation of the chosen countries to indiacte the GDP per capita of each country. The gradation of red colour is used to represent the countries with the most GDP per capita and the least GDP per capita respectively.** \
+\
+**Here comparison of a developed country like the China, a developed country like the India and a underdeveloped country like the Nigeria is done.**
+
+The Country with the most GDP per capita is China.\
+Nigeria comes second in terms of GDP per capita.\
+The Country with the least GDP per capita is India.\
+
+The reason for Nigeria to overtake India in case of GDP per capita is because of the population density in both the countries. \
+\
+
+# Conclusion
+
+The all graphical representations given above help to understand the difference between a Developed, a Developing and an Underdeveloped nation.\
+\
+The metrics are mostly taken with respect to 20+ years comparison and provide the gist and idea of how the metrics impact the growth and the development of a country.
+
+The representations are compiled using the unicef data provided.
+
+# References
+
+*"The R Project for Statistical Computing" by R-project.org*
+
+*"R for Data Science" by Hadley Wickham*
+
+*Patil, I., 2021. Visualizations with statistical details: The\'ggstatsplot\'approach. Journal of Open Source Software, 6(61), p.3167.*
+
+\
