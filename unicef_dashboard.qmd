@@ -67,12 +67,12 @@ Population, GNI per capita, life expectancy, and GDP per capita can be used to c
 All these are different factors that help to know more about the country.
 
 ```{r, echo=FALSE}
-#install.packages("tidyverse")
-#install.packages("palmerpenguins")
-#install.packages("choroplethr")
-#install.packages("countrycode")
-# install.packages("choroplethrMaps")
-# install.packages("maps")
+install.packages("tidyverse")
+install.packages("palmerpenguins")
+install.packages("choroplethr")
+install.packages("countrycode")
+install.packages("choroplethrMaps")
+install.packages("maps")
 ```
 
 ```{r, results=FALSE,echo=FALSE,message=FALSE}
